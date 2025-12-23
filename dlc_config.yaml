@@ -1,0 +1,42 @@
+# Haifa University DLC Configuration for Fish Tracking Project
+
+server:
+  login_node: "login01.dlc.cs.haifa.ac.il"
+  ip: "132.75.245.170"
+  compute_nodes:
+    - "dgx01"
+    - "dgx02"
+    - "dgx03"
+    - "dgx04"
+    - "dgx05"
+    - "dgx06"
+
+hardware:
+  gpus_per_node: 8
+  gpu_type: "NVIDIA A100 40GB"
+  interconnect: "200Gb/s HDR InfiniBand"
+
+container:
+  registry: "nvcr.io"
+  image: "nvidia/pytorch:23.12-py3"
+  local_path: "~/pytorch:23.12-py3.sqsh"
+
+slurm:
+  default_partition: "batch"
+  default_time: "04:00:00"
+  default_gpus: 1
+
+paths:
+  project_dir: "/users/YOUR_USERNAME/fish_tracker"
+  data_dir: "/users/YOUR_USERNAME/fish_tracker/data"
+  models_dir: "/users/YOUR_USERNAME/fish_tracker/models"
+  outputs_dir: "/users/YOUR_USERNAME/fish_tracker/outputs"
+
+jupyter:
+  port: 8888
+  token: "auto"
+  
+sam2:
+  model_config: "sam2_hiera_large.yaml"
+  checkpoint: "sam2_hiera_large.pt"
+  checkpoint_url: "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_large.pt"
