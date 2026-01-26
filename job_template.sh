@@ -20,8 +20,8 @@ echo "=========================================="
 # Run Jupyter notebook as a script (papermill can be used for this)
 # Or run Python script directly
 srun --ntasks=1 \
-     --container-image=/users/YOUR_USERNAME/pytorch:23.12-py3.sqsh \
-     --container-mounts=/users/YOUR_USERNAME/fish_tracker:/workspace \
+     --container-image=$HOME/pytorch:23.12-py3.sqsh \
+     --container-mounts=$HOME/fish_tracker:/workspace \
      python /workspace/scripts/run_tracking.py
 
 echo "Job completed!"

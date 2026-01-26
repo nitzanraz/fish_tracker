@@ -13,8 +13,8 @@ echo ""
 # Start interactive job with Jupyter
 srun --gpus=1 \
      --time=04:00:00 \
-     --container-image=~/pytorch:23.12-py3.sqsh \
-     --container-save=~/pytorch:23.12-py3.sqsh \
+     --container-image=$HOME/pytorch:23.12-py3.sqsh \
+     --container-save=$HOME/pytorch:23.12-py3.sqsh \
      --container-mounts=$HOME/fish_tracker:/workspace \
      --pty /bin/bash -c "
          cd /workspace && \

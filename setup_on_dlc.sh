@@ -54,7 +54,24 @@ else
     echo "Pulling PyTorch container from NGC..."
     echo "This may take several minutes..."
     /dlc/sw/bin/pull_container_to_file.sh nvcr.io/nvidia/pytorch:23.12-py3
+    
+    # Verify container was created
+    if [ ! -f "$CONTAINER_PATH" ]; then
+        echo "❌ Container not found after pull at: $CONTAINER_PATH"
+        echo "Checking current directory..."
+        ls -lh *.sqsh 2>/dev/null || echo "No .sqsh files found"
+        exit 1
+    fi
     echo "✓ Container pulled successfully"
+fi
+
+# Verify container path is correct
+echo "Verifying container: $CONTAINER_PATH"
+if [ ! -f "$CONTAINER_PATH" ]; then
+    echo "❌ Container file not found: $CONTAINER_PATH"
+    echo "Looking for container files..."
+    find ~ -name "*.sqsh" -type f 2>/dev/null | head -5
+    exit 1
 fi
 
 # Step 4: Make scripts executable
