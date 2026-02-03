@@ -183,7 +183,8 @@ class FishTracker:
             frame: Input frame
             
         Returns:
-            Dictionary of tracked objects {id: centroid}
+            Tuple of (objects, rects) where objects is a dictionary of tracked objects {id: centroid}
+            and rects is a list of bounding boxes (x, y, w, h)
         """
         # Detect fish
         rects = self.detect_fish(frame)

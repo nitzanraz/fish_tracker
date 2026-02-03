@@ -142,7 +142,7 @@ The MOG2 background subtractor adapts to:
 - Requires sufficient contrast between fish and background
 - Performance depends on video quality and fish size
 - May struggle with overlapping fish
-- Requires GPU for real-time processing of high-resolution video
+- Real-time processing of high-resolution video may benefit from GPU acceleration (requires OpenCV built with CUDA support)
 
 ## Contributing
 

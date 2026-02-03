@@ -83,8 +83,8 @@ class TestFishTracker(unittest.TestCase):
         cv2.rectangle(frame, (200, 200), (300, 250), (255, 255, 255), -1)
         
         rects = tracker.detect_fish(frame)
-        # Should detect the rectangle
-        self.assertGreaterEqual(len(rects), 0)
+        # Should detect the rectangle as foreground
+        self.assertGreater(len(rects), 0)
         
     def test_track(self):
         """Test tracking function."""
