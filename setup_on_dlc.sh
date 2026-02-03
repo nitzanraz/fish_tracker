@@ -10,9 +10,10 @@ echo "=========================================="
 echo ""
 
 # Check if running on DLC
-if [[ ! $(hostname) =~ dlc\.cs\.haifa\.ac\.il ]]; then
+HOSTNAME=$(hostname)
+if [[ ! $HOSTNAME =~ (dlc\.cs\.haifa\.ac\.il|^login[0-9]+$) ]]; then
     echo "⚠️  Warning: This doesn't appear to be a DLC server"
-    echo "Current hostname: $(hostname)"
+    echo "Current hostname: $HOSTNAME"
     read -p "Continue anyway? (y/n) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -23,9 +24,11 @@ fi
 PROJECT_DIR="$HOME/fish_tracker"
 CONTAINER_NAME="pytorch:23.12-py3.sqsh"
 CONTAINER_PATH="$HOME/$CONTAINER_NAME"
+WRITABLE_CONTAINER="$HOME/pytorch-writable.sqsh"
 
 echo "Project directory: $PROJECT_DIR"
-echo "Container path: $CONTAINER_PATH"
+echo "Base container: $CONTAINER_PATH"
+echo "Writable container: $WRITABLE_CONTAINER"
 echo ""
 
 # Step 1: Check if project directory exists
@@ -85,29 +88,44 @@ echo "✓ Scripts are executable"
 # Step 5: Test container and install dependencies
 echo ""
 echo "Testing container and installing dependencies..."
-echo "This will start a quick test job..."
+echo "This will start a quick test job and create a writable container..."
+echo "Dependencies will be saved for future use."
+echo ""
 
-srun --gpus=1 --time=10:00 \
+srun --gpus=1 --time=15:00 \
      --container-image="$CONTAINER_PATH" \
-     --container-save="$CONTAINER_PATH" \
+     --container-save="$WRITABLE_CONTAINER" \
      --container-mounts="$PROJECT_DIR:/workspace" \
      /bin/bash -c "
          echo 'Testing Python and CUDA...'
          python -c 'import torch; print(f\"PyTorch: {torch.__version__}\"); print(f\"CUDA available: {torch.cuda.is_available()}\")'
          
          echo ''
-         echo 'Installing dependencies from requirements.txt...'
+         echo 'Installing ALL dependencies (including JupyterLab)...'
+         echo 'This happens once and will be saved to the container.'
          cd /workspace
          if [ -f requirements.txt ]; then
-             pip install -q -r requirements.txt
-             echo '✓ Dependencies installed'
+             pip install -r requirements.txt
+             echo '✓ Dependencies installed and saved'
          else
              echo '⚠️  requirements.txt not found'
          fi
          
          echo ''
+         echo 'Verifying installation...'
+         python -c 'import jupyterlab; print(f\"JupyterLab: {jupyterlab.__version__}\")'  
+         echo ''
          echo 'Setup complete inside container!'
      "
+
+if [ $? -eq 0 ] && [ -f "$WRITABLE_CONTAINER" ]; then
+    echo ""
+    echo "✓ Writable container created with all dependencies: $WRITABLE_CONTAINER"
+else
+    echo ""
+    echo "⚠️  Warning: Container save may have failed"
+    echo "Check if $WRITABLE_CONTAINER exists"
+fi
 
 echo ""
 echo "=========================================="
